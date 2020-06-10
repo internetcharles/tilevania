@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Boo.Lang.Environments;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
@@ -13,7 +14,8 @@ public class Player : MonoBehaviour
     private bool isAlive = true;
 
     private Rigidbody2D MyRigidbody2D;
-    private Collider2D MyCollider2D;
+    private CapsuleCollider2D MyBodyCollider2D;
+    private BoxCollider2D MyFeetCollider2D;
     private Animator MyAnimator;
     private float gravityScaleAtStart;
 
@@ -22,7 +24,8 @@ public class Player : MonoBehaviour
     {
         MyRigidbody2D = GetComponent<Rigidbody2D>();
         MyAnimator = GetComponent<Animator>();
-        MyCollider2D = GetComponent<Collider2D>();
+        MyBodyCollider2D = GetComponent<CapsuleCollider2D>();
+        MyFeetCollider2D = GetComponent<BoxCollider2D>();
         gravityScaleAtStart = MyRigidbody2D.gravityScale;
     }
 
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
         FlipSprite();
         Jump();
         ClimbLadder();
+
     }
 
     public void Run()
@@ -47,7 +51,7 @@ public class Player : MonoBehaviour
 
     public void Jump()
     {
-        if (!MyCollider2D.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (!MyFeetCollider2D.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             return;
         }
@@ -72,7 +76,7 @@ public class Player : MonoBehaviour
 
     public void ClimbLadder()
     {
-        if (!MyCollider2D.IsTouchingLayers(LayerMask.GetMask("Ladder")))
+        if (!MyFeetCollider2D.IsTouchingLayers(LayerMask.GetMask("Ladder")))
         {
             MyAnimator.SetBool("Climbing", false);
             MyRigidbody2D.gravityScale = gravityScaleAtStart;
