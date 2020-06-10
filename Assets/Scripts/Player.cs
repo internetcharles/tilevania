@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float runSpeed = 5f;
     [SerializeField] private float jumpSpeed = 5f;
     [SerializeField] private float ladderSpeed = 5f;
+    [SerializeField] private Vector2 deathKick = new Vector2(25f, 25f);
 
     private bool isAlive = true;
 
@@ -32,11 +33,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive) { return; }
         Run(); 
         FlipSprite();
         Jump();
         ClimbLadder();
-
+        Die();
     }
 
     public void Run()
@@ -60,6 +62,16 @@ public class Player : MonoBehaviour
         {
             Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpeed);
             MyRigidbody2D.velocity += jumpVelocityToAdd;
+        }
+    }
+
+    private void Die()
+    {
+        if (MyFeetCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
+        {
+            MyAnimator.SetTrigger("Dying");
+            GetComponent<Rigidbody2D>().velocity = deathKick;
+            isAlive = false;
         }
     }
 
